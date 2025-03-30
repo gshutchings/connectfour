@@ -10,7 +10,8 @@ The Monte Carlo algorithm is typically composed of four steps:
 Repeating those four steps numerous times eventually creates a well-formed tree, which conveniently converges (after many iterations, of course) to the tree formed by a minimax algorithm. 
 
 # Dependencies
-pygame 2.6.1 is what I use
+Python>=3.9.6 
+pygame>=2.6.1
 
 # Running 
-To run, run `python3 src/main.py`. You will be allowed to choose the board size and whether you go first. 
+To run, run `python3 src/main.py`. You will be asked to choose the board size and whether you go first. 
