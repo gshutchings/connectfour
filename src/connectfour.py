@@ -7,7 +7,7 @@ This class handles basic game logic for a connect four game of variable size, in
 class ConnectFour:
 
     def __init__(self, nrows: int=6, ncols: int=7, moves: list=[]) -> None:
-        if nrows < 4 and ncols < 4 or nrows < 1 or ncols < 1:
+        if nrows < 4 and ncols < 4 or nrows < 1 or ncols < 2:
             raise ValueError("This board size is too small for Connect Four to be played at all. ")
         self.nrows = nrows
         self.ncols = ncols
@@ -92,6 +92,9 @@ class ConnectFour:
             self.winner = 0
             return True 
         return False
+    
+    def copy(self):
+        return ConnectFour(ncols=self.ncols, nrows=self.nrows, moves=self.moves)
 
     def __str__(self) -> str: # So you can do print(object) and get a reasonable format
         board_rep = "\n"
@@ -110,3 +113,7 @@ class ConnectFour:
             board_rep += f"  {i} "
         board_rep += "\n"
         return board_rep
+
+    # check for equality between two ConnectFour instances
+    def __eq__(self, other):
+        return self.moves == other.moves and self.nrows == other.nrows and self.ncols == other.ncols
