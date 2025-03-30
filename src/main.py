@@ -15,16 +15,20 @@ while True:
     try:
         ncols = int(input("How wide would you like your board to be? "))
         nrows = int(input("How tall would you like your board to be? "))
-        if ncols > 10 or nrows > 16:
+        if ncols > 16 or nrows > 10:
             print("This might be too big for your screen. Consider a smaller board. ")
             raise ValueError
         game = CF(ncols=ncols, nrows=nrows)
         break
     except ValueError:
-        print("Something went wrong. Please enter integers 2-10 and 1-16")
+        print("Something went wrong. Please enter integers 2-16 and 1-10")
         continue
 
-human_first = input("Would you like to go first? ")[0].upper() == "Y"
+try:
+    human_first = input("Would you like to go first? ")[0].upper() == "Y"
+except IndexError:
+    human_first = True
+
 print()
 
 run_game(game, human_first)

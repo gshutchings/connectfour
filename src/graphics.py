@@ -46,7 +46,7 @@ def run_game(game: CF, human_first: bool, thinking_time: float=1.6, sims: int=64
         
         if game.moves:
             y, x = game.get_most_recent_move()
-            pygame.draw.circle(screen, GRAY, ((.5 + x) * SQUARE_WIDTH, (1.5 + y) * SQUARE_HEIGHT), PIECE_SIZE // 2) # Highlight most recent move
+            pygame.draw.circle(screen, BLACK, ((.5 + x) * SQUARE_WIDTH, (1.5 + y) * SQUARE_HEIGHT), PIECE_SIZE // 4) # Highlight most recent move
         
         if game.winner is None:
             if (game.player == 1) == human_first:
