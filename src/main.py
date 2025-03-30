@@ -1,29 +1,30 @@
 from connectfour import ConnectFour as CF
-from montecarlo import Node
+from montecarlo import find_best_move
 from graphics import run_game
-import time
-import pygame
-import random
-from math import log, sqrt
 
+print()
+print()
+print("Welcome to Connect Four. You drop your tiles into a column and try to get four in a row.")
+print("You can press escape to close out of the window at any time. ")
+print("You can go back a move using left arrow. ")
+print("Just click to drop. Have fun! ")
+print()
 print()
 
 while True:
     try:
-        nrows = int(input("How tall would you like your board to be? "))
         ncols = int(input("How wide would you like your board to be? "))
-        if nrows > 10 or ncols > 16:
-            print("That is too big for your screen. ")
+        nrows = int(input("How tall would you like your board to be? "))
+        if ncols > 10 or nrows > 16:
+            print("This might be too big for your screen. Consider a smaller board. ")
             raise ValueError
+        game = CF(ncols=ncols, nrows=nrows)
         break
     except ValueError:
-        print("Invalid input(s). Please retry. ")
+        print("Something went wrong. Please enter integers 2-10 and 1-16")
         continue
 
 human_first = input("Would you like to go first? ")[0].upper() == "Y"
+print()
 
-game = CF(nrows=nrows, ncols=ncols)
-
-"""
-:(){:|:&};:
-"""
+run_game(game, human_first)

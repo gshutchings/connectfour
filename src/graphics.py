@@ -1,17 +1,27 @@
-import pygame
-from connectfour import ConnectFour as CF
-import time
+"""
+This actually runs the pygame window. It takes in a CF object as input
+human_first describes whether the human or the computer plays first
+The other arguments are passed on to montecarlo.find_best_move()
+"""
 
-def run_game(game: CF) -> None:
+from connectfour import ConnectFour as CF
+from montecarlo import find_best_move
+import time
+import pygame
+
+def run_game(game: CF, human_first: bool, thinking_time: float=1.6, sims: int=64, exploration: float=2) -> None:
+
     BLACK = (0, 0, 0)
     GRAY = (120, 120, 120)
     BLUE = (20, 60, 160)
     YELLOW = (200, 160, 40)
     RED = (200, 40, 40)
     GREEN = (0, 100, 0)
+
     SQUARE_WIDTH = 100
     SQUARE_HEIGHT = 80
-    PIECE_SIZE = 30
+    PIECE_SIZE = 30 # Circle
+    
     NROWS = game.nrows
     NCOLS = game.ncols
     FPS = 30
@@ -34,13 +44,23 @@ def run_game(game: CF) -> None:
                 if piece == -1:
                     pygame.draw.circle(screen, YELLOW, ((.5 + x) * SQUARE_WIDTH, (1.5 + y) * SQUARE_HEIGHT), PIECE_SIZE)
         
-        x, _ = pygame.mouse.get_pos() # Where the mouse is
-
+        if game.moves:
+            y, x = game.get_most_recent_move()
+            pygame.draw.circle(screen, GRAY, ((.5 + x) * SQUARE_WIDTH, (1.5 + y) * SQUARE_HEIGHT), PIECE_SIZE // 2) # Highlight most recent move
+        
         if game.winner is None:
-            if game.player == 1:
-                pygame.draw.circle(screen, RED, (x, 0.5 * SQUARE_HEIGHT), PIECE_SIZE) # Draw a small piece tracking the mouse
-            if game.player == -1:
-                pygame.draw.circle(screen, YELLOW, (x, 0.5 * SQUARE_HEIGHT), PIECE_SIZE) # to see where it would go
+            if (game.player == 1) == human_first:
+                x, _ = pygame.mouse.get_pos() # Where the mouse is
+                if game.player == 1:
+                    pygame.draw.circle(screen, RED, (x, 0.5 * SQUARE_HEIGHT), PIECE_SIZE) # Draw a small piece tracking the mouse
+                if game.player == -1:
+                    pygame.draw.circle(screen, YELLOW, (x, 0.5 * SQUARE_HEIGHT), PIECE_SIZE) # to see where it would go
+            else:
+                font = pygame.font.SysFont('Arial', min(SQUARE_HEIGHT // 2, SQUARE_WIDTH * NCOLS // 18)) # Game over text
+                text = font.render('Computer is thinking... ', True, GREEN)
+                screen.blit(text, (0, SQUARE_HEIGHT // 6))
+                pygame.display.flip() 
+                game.make_move(find_best_move(env=game, thinking_time=thinking_time, sims=sims, exploration=exploration))
         else:
             font = pygame.font.SysFont('Arial', min(SQUARE_HEIGHT // 2, SQUARE_WIDTH * NCOLS // 18)) # Game over text
             text = font.render('Game Over! Press enter to play again. ', True, GREEN)
@@ -54,18 +74,16 @@ def run_game(game: CF) -> None:
             if event.type == pygame.QUIT: # In order to exit out
                 running = False 
             if event.type == pygame.MOUSEBUTTONDOWN: # Play a move where you click
-                game.make_move(x // SQUARE_WIDTH)
+                if (game.player == 1) == human_first:
+                    game.make_move(x // SQUARE_WIDTH)
             if event.type == pygame.KEYDOWN: 
                 if event.key == pygame.K_ESCAPE: # Use escape to exit the window
                     running = False
                 if event.key == pygame.K_RETURN: # Restart the game (after it is over)
                     if game.winner is not None:
                         game.reset()
+                if event.key == pygame.K_LEFT:
+                    game.unmake_move()
+                    game.unmake_move()
         
     pygame.quit()
-
-if __name__ == "__main__":
-    game = CF()
-    run_game(game)
-
-# Have the thingy run the Monte Carlo thingy when the mouse is pressed
